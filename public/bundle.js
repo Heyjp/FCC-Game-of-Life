@@ -49,11 +49,159 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(34);
 
-	ReactDOM.render(React.createElement(
-	  'h1',
-	  null,
-	  'Hello, world!'
-	), document.getElementById('root'));
+	var CellCheck = __webpack_require__(172);
+	var timer;
+	var runner;
+
+	/*
+	var divStyle = {
+	  backgroundColor: 'blue',
+	  width: "10px",
+	  height: "10px"
+	};
+	*/
+	function compareArrays(array1, array2) {
+
+	  if (array1.length !== array2.length) {
+	    return false;
+	  }
+
+	  for (var i = 0; i < array1.length; i++) {
+	    if (array2.indexOf(array1[i]) === -1) {
+	      return false;
+	    }
+	  }
+	  return true;
+	}
+
+	var Container = React.createClass({
+	  displayName: 'Container',
+
+	  render: function render() {
+	    return React.createElement(Board, null);
+	  }
+	});
+
+	var Board = React.createClass({
+	  displayName: 'Board',
+
+	  getInitialState: function getInitialState() {
+	    return {
+	      Tiles: [1, 2, 3, 4],
+	      timer: false,
+	      currentCount: 0,
+	      runs: false
+	    };
+	  }, checkTiles: function checkTiles() {
+	    var newRuns = this.state.currentCount + 1;
+	    var Tiles = this.state.Tiles;
+	    var newState = CellCheck(Tiles);
+
+	    if (compareArrays(Tiles, newState) === true) {
+	      clearInterval(this.state.timer);
+	      return this.setState({
+	        runs: false,
+	        timer: undefined
+	      });
+	    } else {
+	      return this.setState({
+	        Tiles: newState,
+	        currentCount: newRuns
+	      });
+	    }
+	  }, timer: function timer() {
+	    if (this.state.runs === false) {
+	      this.setState({
+	        timer: setInterval(this.checkTiles, 1000),
+	        runs: true
+	      });
+	    } else {
+	      clearInterval(this.state.timer);
+	      this.setState({
+	        timer: undefined,
+	        runs: false
+	      });
+	    }
+	  }, reset: function reset() {
+	    clearInterval(this.state.timer);
+	    this.setState({
+	      runs: false,
+	      timer: undefined,
+	      currentCount: 0,
+	      Tiles: []
+	    });
+	  },
+	  handleClick: function handleClick(index) {
+
+	    var tiles = this.state.Tiles;
+	    if (tiles.indexOf(index) !== -1) {
+	      var ele = tiles.indexOf(index);
+	      tiles.splice(ele, 1);
+	    } else {
+	      tiles.push(parseInt(index));
+	    }
+	    this.setState({
+	      Tiles: tiles
+	    });
+	  },
+	  render: function render() {
+	    var size = 10 * 10;
+	    var Tiles = [];
+	    for (var i = 0; i < size; i++) {
+	      Tiles.push(i); //
+	    }
+	    var TileBoard = Tiles.map(function (ele, idx) {
+	      var is_selected = this.state.Tiles.indexOf(idx) !== -1;
+
+	      return React.createElement(Tile, { onClick: this.handleClick.bind(this, idx), isSelected: is_selected, key: idx });
+	    }.bind(this));
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'div',
+	        { id: 'box' },
+	        TileBoard
+	      ),
+	      React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          'a',
+	          { href: '#', className: 'btn btn-default', onClick: this.timer },
+	          'Start Board'
+	        ),
+	        React.createElement(
+	          'a',
+	          { href: '#', className: 'btn btn-default', onClick: this.reset },
+	          'Reset Board'
+	        ),
+	        this.state.currentCount
+	      )
+	    );
+	  }
+	});
+
+	var Tile = React.createClass({
+	  displayName: 'Tile',
+
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      isSelected: false
+	    };
+	  },
+	  render: function render() {
+	    var liStyle = {
+	      background: '#eee'
+	    };
+	    if (this.props.isSelected) {
+	      liStyle['background'] = '#ff7f7f';
+	    }
+	    return React.createElement('div', { className: 'tile', style: liStyle, onClick: this.props.onClick });
+	  }
+	});
+
+	ReactDOM.render(React.createElement(Container, null), document.getElementById('root'));
 
 /***/ },
 /* 1 */
@@ -16022,7 +16170,8 @@
 	  if (x === y) {
 	    // Steps 1-5, 7-10
 	    // Steps 6.b-6.e: +0 != -0
-	    return x !== 0 || 1 / x === 1 / y;
+	    // Added the nonzero y check to make Flow happy, but it is redundant
+	    return x !== 0 || y !== 0 || 1 / x === 1 / y;
 	  } else {
 	    // Step 6.a: NaN == NaN
 	    return x !== x && y !== y;
@@ -21420,6 +21569,204 @@
 
 	module.exports = ReactDOMNullInputValuePropHook;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
+/* 172 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	function returnObject(index) {
+	    var i = parseInt(index);
+	    var rows = 10;
+	    var columns = 10;
+	    var size = rows * columns;
+
+	    if (index === 0) {
+	        // No top left - top, top right, left, bottom left values
+	        return {
+	            right: i + 1,
+	            bottom: i + rows,
+	            bottomRight: i + rows + 1
+	        };
+	    } else if (index % 10 === 0 && index !== 90) {
+	        // no top left, left, bottom left
+	        return {
+	            top: i - rows,
+	            topright: i - rows + 1,
+	            right: i + 1,
+	            bottom: i + rows,
+	            bottomRight: i + rows + 1
+	        };
+	    } else if (index > 0 && index < 9) {
+	        // no top values
+	        return {
+	            left: i - 1,
+	            right: i + 1,
+	            bottomLeft: i + rows - 1,
+	            bottom: i + rows,
+	            bottomRight: i + rows + 1
+	        };
+	    } else if (index === 9) {
+	        // No top top right right bottom right values
+	        return {
+	            left: i - 1,
+	            bottomLeft: i + rows - 1,
+	            bottom: i + rows
+	        };
+	    } else if (index % 10 === 9 && index !== 99 && index !== 9) {
+	        // no top right, right, bottom right
+	        return {
+	            left: i - 1,
+	            bottomLeft: i + rows - 1,
+	            bottom: i + rows,
+	            topleft: i - rows - 1,
+	            top: i - rows
+	        };
+	    } else if (index === 90) {
+	        // no top left, left, bottom left bottom bottom right
+	        return {
+	            top: i - rows,
+	            topright: i - rows + 1,
+	            right: i + 1
+	        };
+	    } else if (index > 90 && index < 99) {
+	        // no bottom left, bottom && bottom right
+	        return {
+	            topleft: i - rows - 1,
+	            top: i - rows,
+	            topright: i - rows + 1,
+	            left: i - 1,
+	            right: i + 1
+	        };
+	    } else if (index === 99) {
+	        // no bottom left, bottom, bottom right, right, top right
+	        return {
+	            topleft: i - rows - 1,
+	            top: i - rows,
+	            left: i - 1
+	        };
+	    } else {
+	        return {
+	            left: i - 1,
+	            right: i + 1,
+	            bottomLeft: i + rows - 1,
+	            bottom: i + rows,
+	            bottomRight: i + rows + 1,
+	            topleft: i - rows - 1,
+	            top: i - rows,
+	            topright: i - rows + 1
+	        };
+	    }
+	}
+
+	function findSurroundingCells(int) {
+	    var surroundingCells = returnObject(int);
+	    return surroundingCells;
+	}
+
+	function getCellsArray(element) {
+
+	    // Active and inactive cells
+	    var cells = findSurroundingCells(element);
+	    // Takes the object with all the positions and transforms it into an array
+
+	    var getKeys = function getKeys(obj) {
+	        var keys = [];
+	        for (var key in obj) {
+	            keys.push(obj[key]);
+	        }
+	        return keys;
+	    };
+	    // Return the array
+	    return getKeys(cells);
+	}
+
+	function compareLiveAndDead(index, currentState) {
+
+	    var stateArray = currentState;
+	    var surroundingCells = getCellsArray(index);
+	    var newArray = [];
+
+	    // Check whether current index's surroundingCells are inactive or Inactive;
+	    for (var i = 0; i < stateArray.length; i++) {
+	        if (surroundingCells.indexOf(stateArray[i]) !== -1) {
+	            newArray.push("true");
+	        }
+	    }
+
+	    if (newArray.length < 2) {
+	        // Kill Cell
+
+	        return false;
+	    } else if (newArray.length === 2 || newArray.length === 3) {
+	        // Cell Lives
+	        return index;
+	    } else {
+	        return false;
+	    }
+	}
+
+	// Function to cycle through the current state and return new state of live or dead cells
+
+	var cellCheck = function cellCheck(currentState) {
+	    var oldState = currentState;
+	    var newState = oldState.filter(function (ele, index) {
+	        return compareLiveAndDead(ele, oldState);
+	    });
+	    var dCellCheck = checkLiveCells(oldState);
+	    newState = newState.concat(dCellCheck);
+	    return newState;
+	};
+
+	module.exports = cellCheck;
+
+	// Dead Cell Checker
+
+	// Return an array of all the deadCells
+	function deadCellFinder(thisState) {
+	    var liveCells = thisState;
+	    var newArray = [];
+	    for (var i = 0; i <= 99; i++) {
+	        if (liveCells.indexOf(i) === -1) {
+	            newArray.push(i);
+	        }
+	    }
+	    // Returns an array of all the deadcells on the board
+	    return newArray;
+	}
+
+	function verifyDeadCellArray(deadCellArray, state) {
+	    var liveCells = state;
+	    var deadCells = deadCellArray;
+	    var newArray = [];
+	    for (var i = 0; i < liveCells.length; i++) {
+	        if (deadCells.indexOf(liveCells[i]) !== -1) {
+	            newArray.push("true");
+	        }
+	    }
+	    if (newArray.length === 3) {
+	        return true;
+	    } else {
+	        return false;
+	    }
+	}
+
+	function checkLiveCells(theState) {
+	    // Array of Dead Cells
+	    var deadCells = deadCellFinder(theState);
+	    var newArray = [];
+	    for (var i = 0; i < deadCells.length; i++) {
+	        // Finds the surrouding cells for each element in deadCells, returns an array.
+	        var surroundCell = getCellsArray(deadCells[i]);
+	        // Check to see if the values in array are positive and === to two
+	        var liveOrDie = verifyDeadCellArray(surroundCell, theState);
+	        if (liveOrDie !== false) {
+	            newArray.push(deadCells[i]);
+	        }
+	    }
+	    return newArray;
+	}
 
 /***/ }
 /******/ ]);
