@@ -2,6 +2,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 
 var CellCheck = require('./Components/Board.js');
+
 var timer;
 var runner;
 
@@ -56,7 +57,7 @@ var Board = React.createClass({
  }, timer: function () {
    if (this.state.runs === false) {
       this.setState({
-        timer: setInterval(this.checkTiles, 1000),
+        timer: setInterval(this.checkTiles, 400),
         runs: true
       })
    } else {
@@ -97,17 +98,24 @@ var Board = React.createClass({
       var TileBoard = Tiles.map(function (ele, idx) {
       var is_selected = this.state.Tiles.indexOf(idx) !== -1;
 
-      return <Tile onClick={this.handleClick.bind(this, idx)} isSelected={is_selected} key={idx}></Tile>
+      return <Tile className="tile" onClick={this.handleClick.bind(this, idx)} isSelected={is_selected} key={idx}></Tile>
     }.bind(this));
     return (
       <div>
+        <div className="row">
+          <div className="col-lg-12 col-mg-12 col-sm-12 generations">
+            <h4>Num of Generations</h4>
+            <p className="text-center">{this.state.currentCount}</p>
+          </div>
+        </div>
         <div id="box">
         {TileBoard}
         </div>
-        <div>
-          <a href="#" className="btn btn-default" onClick={this.timer}>Start Board</a>
-          <a href="#" className="btn btn-default" onClick={this.reset}>Reset Board</a>
-          {this.state.currentCount}
+        <div className="row">
+          <div className="col-lg-12 col-md-12 col-sm-12 btn-container">
+            <a href="#" className="btn btn-default" onClick={this.timer}>Start Board</a>
+            <a href="#" className="btn btn-default" onClick={this.reset}>Reset Board</a>
+          </div>
         </div>
       </div>
     )

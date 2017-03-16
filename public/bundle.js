@@ -50,16 +50,10 @@
 	var ReactDOM = __webpack_require__(34);
 
 	var CellCheck = __webpack_require__(172);
+
 	var timer;
 	var runner;
 
-	/*
-	var divStyle = {
-	  backgroundColor: 'blue',
-	  width: "10px",
-	  height: "10px"
-	};
-	*/
 	function compareArrays(array1, array2) {
 
 	  if (array1.length !== array2.length) {
@@ -112,7 +106,7 @@
 	  }, timer: function timer() {
 	    if (this.state.runs === false) {
 	      this.setState({
-	        timer: setInterval(this.checkTiles, 1000),
+	        timer: setInterval(this.checkTiles, 400),
 	        runs: true
 	      });
 	    } else {
@@ -153,11 +147,29 @@
 	    var TileBoard = Tiles.map(function (ele, idx) {
 	      var is_selected = this.state.Tiles.indexOf(idx) !== -1;
 
-	      return React.createElement(Tile, { onClick: this.handleClick.bind(this, idx), isSelected: is_selected, key: idx });
+	      return React.createElement(Tile, { className: 'tile', onClick: this.handleClick.bind(this, idx), isSelected: is_selected, key: idx });
 	    }.bind(this));
 	    return React.createElement(
 	      'div',
 	      null,
+	      React.createElement(
+	        'div',
+	        { className: 'row' },
+	        React.createElement(
+	          'div',
+	          { className: 'col-lg-12 col-mg-12 col-sm-12 generations' },
+	          React.createElement(
+	            'h4',
+	            null,
+	            'Num of Generations'
+	          ),
+	          React.createElement(
+	            'p',
+	            { className: 'text-center' },
+	            this.state.currentCount
+	          )
+	        )
+	      ),
 	      React.createElement(
 	        'div',
 	        { id: 'box' },
@@ -165,18 +177,21 @@
 	      ),
 	      React.createElement(
 	        'div',
-	        null,
+	        { className: 'row' },
 	        React.createElement(
-	          'a',
-	          { href: '#', className: 'btn btn-default', onClick: this.timer },
-	          'Start Board'
-	        ),
-	        React.createElement(
-	          'a',
-	          { href: '#', className: 'btn btn-default', onClick: this.reset },
-	          'Reset Board'
-	        ),
-	        this.state.currentCount
+	          'div',
+	          { className: 'col-lg-12 col-md-12 col-sm-12 btn-container' },
+	          React.createElement(
+	            'a',
+	            { href: '#', className: 'btn btn-default', onClick: this.timer },
+	            'Start Board'
+	          ),
+	          React.createElement(
+	            'a',
+	            { href: '#', className: 'btn btn-default', onClick: this.reset },
+	            'Reset Board'
+	          )
+	        )
 	      )
 	    );
 	  }
@@ -21719,8 +21734,6 @@
 	    return newState;
 	};
 
-	module.exports = cellCheck;
-
 	// Dead Cell Checker
 
 	// Return an array of all the deadCells
@@ -21767,6 +21780,8 @@
 	    }
 	    return newArray;
 	}
+
+	module.exports = cellCheck;
 
 /***/ }
 /******/ ]);

@@ -148,9 +148,6 @@ var cellCheck = function(currentState) {
     return newState;
 };
 
-module.exports = cellCheck;
-
-
 // Dead Cell Checker
 
 // Return an array of all the deadCells
@@ -197,3 +194,6 @@ function checkLiveCells(theState) {
     }
     return newArray;
 }
+
+
+module.exports = cellCheck;

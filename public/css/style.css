@@ -1,17 +1,20 @@
-body { padding-top: 70px; }
-
+body {
+    padding-top: 100px;
+  }
 
 #box {
   display: flex;
   flex-wrap: wrap;
-  align-content: center;
-  justify-content: center;
-  width: 100%;
+  flex-direction: row;
+  box-sizing: border-box;
+  width: 400px;
+  height: 400px;
 }
 
 .tile {
-  width: 15px;
-  height: 15px;
+  display: block;
+  width: 10%;
+  height: 10%;
   border: 1px solid white;
   background-color: black;
 }
@@ -23,4 +26,17 @@ body { padding-top: 70px; }
   margin-right: auto;
   margin-left: auto;
   width: 14%
+}
+
+.btn-container {
+  margin: 10px 10px;
+  padding: 20px;
+}
+
+.btn-container a {
+  margin: 0px 10px;
+}
+
+.generations {
+  margin-bottom: 20px;
 }
