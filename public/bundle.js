@@ -149,6 +149,14 @@
 
 	      return React.createElement(Tile, { className: 'tile', onClick: this.handleClick.bind(this, idx), isSelected: is_selected, key: idx });
 	    }.bind(this));
+
+	    var btnText = this.state.runs === false ? "Start Board" : "Stop Board";
+
+	    var style = {
+	      backgroundColor: this.state.runs ? "#CF000F" : "#006442",
+	      color: "white"
+	    };
+
 	    return React.createElement(
 	      'div',
 	      null,
@@ -183,8 +191,8 @@
 	          { className: 'col-lg-12 col-md-12 col-sm-12 btn-container' },
 	          React.createElement(
 	            'a',
-	            { href: '#', className: 'btn btn-default', onClick: this.timer },
-	            'Start Board'
+	            { href: '#', style: style, className: 'btn btn-default', onClick: this.timer },
+	            btnText
 	          ),
 	          React.createElement(
 	            'a',

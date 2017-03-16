@@ -100,6 +100,14 @@ var Board = React.createClass({
 
       return <Tile className="tile" onClick={this.handleClick.bind(this, idx)} isSelected={is_selected} key={idx}></Tile>
     }.bind(this));
+
+    var btnText = this.state.runs === false ? "Start Board" : "Stop Board";
+
+    const style = {
+      backgroundColor: this.state.runs ? "#CF000F" :"#006442",
+      color: "white"
+    }
+
     return (
       <div>
         <div className="row">
@@ -113,7 +121,7 @@ var Board = React.createClass({
         </div>
         <div className="row">
           <div className="col-lg-12 col-md-12 col-sm-12 btn-container">
-            <a href="#" className="btn btn-default" onClick={this.timer}>Start Board</a>
+            <a href="#" style={style} className="btn btn-default" onClick={this.timer}>{btnText}</a>
             <a href="#" className="btn btn-default" onClick={this.reset}>Reset Board</a>
           </div>
         </div>
