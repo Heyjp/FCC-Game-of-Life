@@ -1,2 +1,2 @@
-# node-react
-Boilerplate test
+# Game of Life
+Built with React.js
